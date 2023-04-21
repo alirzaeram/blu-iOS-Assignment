@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21279" systemVersion="22A400" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="CardEntity" representedClassName="CardEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="card_number" optional="YES" attributeType="String"/>
+        <attribute name="card_type" optional="YES" attributeType="String"/>
+        <relationship name="home" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="HomeEntity"/>
+    </entity>
+    <entity name="HomeEntity" representedClassName="HomeEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="last_transfer" optional="YES" attributeType="String"/>
+        <attribute name="note" optional="YES" attributeType="String"/>
+        <relationship name="cardEntity" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CardEntity"/>
+        <relationship name="moreInfoEntity" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MoreInfoEntity"/>
+        <relationship name="personEntity" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PersonEntity"/>
+    </entity>
+    <entity name="MoreInfoEntity" representedClassName="MoreInfoEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="attribute" optional="YES"/>
+        <attribute name="number_of_transfers" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="total_transfer" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+    </entity>
+    <entity name="PersonEntity" representedClassName="PersonEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="avatar" optional="YES" attributeType="String"/>
+        <attribute name="email" optional="YES" attributeType="String"/>
+        <attribute name="full_name" optional="YES" attributeType="String"/>
+    </entity>
+</model>
