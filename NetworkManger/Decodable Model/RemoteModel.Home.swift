@@ -7,27 +7,46 @@
 
 import Foundation
 
-public protocol RemoteModelHomeProtocol {
-    var person: RemoteModel.Person { get }
-    var card: RemoteModel.Card { get }
+public protocol RemoteModelHomeProtocol: Codable {
+    var person: RemoteModelPersonProtocol { get }
+    var card: RemoteModelCardProtocol { get }
     var lastTransfer: String { get }
     var note: String? { get }
-    var moreInfo: RemoteModel.MoreInfo { get }
+    var moreInfo: RemoteModelMoreInfoProtocol { get }
 }
 
 extension RemoteModel {
-    public struct Home: RemoteModelHomeProtocol, Decodable {
-        public var person: Person
-        public var card: Card
+    public struct Home: RemoteModelHomeProtocol {
+        
+        public var person: RemoteModelPersonProtocol
+        public var card: RemoteModelCardProtocol
+        public var moreInfo: RemoteModelMoreInfoProtocol
         public var lastTransfer: String
         public var note: String?
-        public var moreInfo: MoreInfo
         
         enum CodingKeys: String, CodingKey {
-            case person, card
+            case person, card, note
             case lastTransfer = "last_transfer"
-            case note
             case moreInfo = "more_info"
         }
+        
+        public init(from decoder: Decoder) throws {
+            let container: KeyedDecodingContainer<RemoteModel.Home.CodingKeys> = try decoder.container(keyedBy: RemoteModel.Home.CodingKeys.self)
+            self.person = try container.decode(RemoteModel.Person.self, forKey: RemoteModel.Home.CodingKeys.person)
+            self.card = try container.decode(RemoteModel.Card.self, forKey: RemoteModel.Home.CodingKeys.card)
+            self.lastTransfer = try container.decode(String.self, forKey: RemoteModel.Home.CodingKeys.lastTransfer)
+            self.note = try container.decodeIfPresent(String.self, forKey: RemoteModel.Home.CodingKeys.note)
+            self.moreInfo = try container.decode(RemoteModel.MoreInfo.self, forKey: RemoteModel.Home.CodingKeys.moreInfo)
+        }
+        
+        public func encode(to encoder: Encoder) throws {
+            var container = encoder.container(keyedBy: CodingKeys.self)
+            try container.encode(self.person, forKey: .person)
+            try container.encode(self.card, forKey: .card)
+            try container.encode(self.moreInfo, forKey: .moreInfo)
+            try container.encode(self.lastTransfer, forKey: .lastTransfer)
+            try container.encode(self.note, forKey: .note)
+        }
+        
     }
 }

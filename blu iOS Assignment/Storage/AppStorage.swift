@@ -25,7 +25,8 @@ class AppStorage {
     }
     
     @discardableResult private func fetch() throws -> [Model.Home] {
-        favorite = try database.readFromFile()
+        let array = try database.readFromFile()
+        favorite = array.sorted { ($0.lastFavorite ?? Int.max) < ($1.lastFavorite ?? Int.max) }
         return favorite
     }
 
@@ -35,6 +36,8 @@ class AppStorage {
     
     private func syncCartForApplication() {
         do {
+            let favorite = favorite.sorted { ($0.lastFavorite ?? Int.max) < ($1.lastFavorite ?? Int.max) }
+            self.favorite = favorite
             try saveCart()
         }catch let error {
             debugPrint("CartManager Saving Error: \(error.localizedDescription)")

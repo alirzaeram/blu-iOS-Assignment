@@ -16,5 +16,7 @@ enum ViewController { }
 enum ViewComponents {
     enum Cell { }
     enum View { }
+    enum Header { }
 }
 
+enum Theme { }

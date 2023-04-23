@@ -7,9 +7,14 @@
 
 import Foundation
 
+public protocol RemoteModelMoreInfoProtocol: Codable {
+    var numberOfTransfers: Int { get set }
+    var totalTransfer: Int { get set }
+}
+
 extension RemoteModel {
-    public struct MoreInfo: Codable {
-        let numberOfTransfers, totalTransfer: Int
+    public struct MoreInfo: RemoteModelMoreInfoProtocol {
+        public var numberOfTransfers, totalTransfer: Int
 
         enum CodingKeys: String, CodingKey {
             case numberOfTransfers = "number_of_transfers"

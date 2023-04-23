@@ -7,10 +7,15 @@
 
 import Foundation
 
+public protocol RemoteModelCardProtocol: Codable {
+    var cardNumber: String { get set }
+    var cardType: String { get set }
+    
+}
+
 extension RemoteModel {
-    public struct Card: Codable {
-        let cardNumber: String
-        let cardType: String
+    public struct Card: RemoteModelCardProtocol {
+        public var cardNumber, cardType: String
 
         enum CodingKeys: String, CodingKey {
             case cardNumber = "card_number"

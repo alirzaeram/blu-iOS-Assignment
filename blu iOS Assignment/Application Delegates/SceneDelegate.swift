@@ -17,13 +17,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         self.window = window
         
         
-        let viewModel: ViewModel.Home = .init()
-        let homeVC = ViewController.Home()
-        viewModel.delegate = homeVC
-        homeVC.viewModel = viewModel
+        let mainNavigation: UINavigationController = .init()
+        let router: Router = .init(navigationController: mainNavigation)
+        window.rootViewController = mainNavigation
         
-        
-        window.rootViewController = homeVC
+        router.navigateToHome()
         
         window.makeKeyAndVisible()
     }

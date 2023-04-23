@@ -10,6 +10,7 @@ import NetworkManger
 
 extension ViewModel {
     class Home: HomeViewModelProtocol {
+        var router: Router
         var currentPagination: Int
         var model: Model.List
         
@@ -19,9 +20,11 @@ extension ViewModel {
         var localDBManage: AppStorage
         
         var networkItems: [RemoteModelHomeProtocol] = [Model.Home]()
-        var delegate: HomeViewProtocol?
+        weak var delegate: HomeViewProtocol?
         
-        init() {
+        init(router: Router) {
+            self.router = router
+            
             self.networkManage = AppNetworkManager.init()
             self.localDBManage = .shared
             
@@ -45,7 +48,6 @@ extension ViewModel {
                 }
             }
         }
-        
         
         private func fetchData(completion: @escaping (Result<(Model.List), Error>) -> Void) {
             var networkResult: [Model.Home]?
@@ -76,9 +78,25 @@ extension ViewModel {
             }
             
             dispatchGroup.notify(queue: .main) {
-                guard let networkResult else {
+                guard var networkResult else {
                     completion(.failure(AppError.tryAgain))
                     return
+                }
+                
+                var hashTable = [String: Bool]()
+
+                // Populate hash table with items from array1
+                for item in dbResult.enumerated() {
+                    hashTable[item.element.person.fullName] = true
+                }
+
+                // Search for matching items in array2
+                for item in networkResult.enumerated() {
+                    if let found = hashTable[item.element.person.fullName], found {
+                        networkResult[item.offset].isFavorite = true
+                    }else {
+                        networkResult[item.offset].isFavorite = false
+                    }
                 }
                 
                 completion(.success(.init(favorite: dbResult, list: networkResult)))
@@ -87,8 +105,36 @@ extension ViewModel {
         
         private func mapModels(_ remote: [RemoteModelHomeProtocol]) -> [Model.Home] {
             return remote.map {
-                .init(isFavorite: false, person: $0.person, card: $0.card, lastTransfer: $0.lastTransfer, note: $0.note, moreInfo: $0.moreInfo)
+                .init(isFavorite: false,
+                      person: .init(fullName: $0.person.fullName, avatar: $0.person.avatar, email: $0.person.email),
+                      card: .init(cardNumber: $0.card.cardNumber, cardType: $0.card.cardType),
+                      lastTransfer: $0.lastTransfer, note: $0.note,
+                      moreInfo: .init(numberOfTransfers: $0.moreInfo.numberOfTransfers, totalTransfer: $0.moreInfo.totalTransfer))
             }
+        }
+        
+        internal func navigateDetail(_ model: Model.Home) {
+            router.navigateToDetail(model)
+        }
+        
+        internal func shouldChangeFavorite(_ model: Model.Home, completion: @escaping () -> Void) {
+            let favorite = localDBManage.favorite
+            
+            if favorite.contains(model) {
+                localDBManage.remove(item: model)
+            }else {
+                localDBManage.add(item: model)
+            }
+            
+            self.model.favorite = localDBManage.favorite
+            
+            if let index = self.model.list.firstIndex(where: { $0 == model }) {
+                let isFav = self.model.list[index].isFavorite
+                self.model.list[index].isFavorite = !(isFav)
+            }
+            
+            completion()
+            
         }
     }
 }
