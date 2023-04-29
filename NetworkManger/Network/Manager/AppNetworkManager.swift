@@ -8,7 +8,7 @@
 import Foundation
 
 // Class to manage the network requests
-public class AppNetworkManager: NetworkManagerProtocol {
+open class AppNetworkManager: NetworkManagerProtocol {
     
     public var networking: Networking
     private let queue = DispatchQueue(label: "com.blu.networkManager", attributes: .concurrent)
@@ -18,7 +18,7 @@ public class AppNetworkManager: NetworkManagerProtocol {
     }
     
     // Method to create a URLRequest object
-    internal func createURL(path: String, method: NetworkHTTPMethodEnum, payload: Encodable?, timeout: TimeInterval) -> URLRequest {
+    public func createURL(path: String, method: NetworkHTTPMethodEnum, payload: Encodable?, timeout: TimeInterval) -> URLRequest {
         // Create the URL from the URL components
         guard let url: URL = .init(string: "\(endPointProtocol())://\(baseURL())\(path)") else {
             fatalError()
@@ -32,11 +32,11 @@ public class AppNetworkManager: NetworkManagerProtocol {
     }
     
     // Method to return the endpoint protocol
-    func endPointProtocol() -> String { "https" }
+    open func endPointProtocol() -> String { "https" }
     
     // Method to return the baseURL
-    func baseURL() -> String {
-        "4e6774cc-4d63-41b2-8003-336545c0a86d.mock.pstmn.io/"
+    open func baseURL() -> String {
+        preconditionFailure("BaseURL Should be overridden!") 
     }
 }
 

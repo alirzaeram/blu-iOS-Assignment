@@ -19,21 +19,21 @@ extension ViewModel {
         // Singleton object of local db manager object
         var localDBManage: AppStorage
         
-        var networkItems: [RemoteModelHomeProtocol] = [Model.Home]()
+        var networkItems: [Model.Home] = [Model.Home]()
         weak var delegate: HomeViewProtocol?
         
         init(router: Router) {
             self.router = router
             
-            self.networkManage = AppNetworkManager.init()
+            self.networkManage = Repository.Home.init()
             self.localDBManage = .shared
             
             self.currentPagination = 0
             self.model = .init(favorite: [], list: [])
         }
         
-        func shouldFetch() {
-            self.fetchData { [weak self] result in
+        func shouldFetch(_ next: Bool = true) {
+            self.fetchData(next) { [weak self] result in
                 guard let self,
                       let delegate = self.delegate else { return }
                 
@@ -49,7 +49,7 @@ extension ViewModel {
             }
         }
         
-        private func fetchData(completion: @escaping (Result<(Model.List), Error>) -> Void) {
+        private func fetchData(_ next: Bool, completion: @escaping (Result<(Model.List), Error>) -> Void) {
             var networkResult: [Model.Home]?
             var dbResult: [Model.Home] = []
             
@@ -62,18 +62,27 @@ extension ViewModel {
             
             // Fetch data from network
             dispatchGroup.enter()
-            currentPagination += 1
+            if next {
+                currentPagination += 1
+            }else {
+                currentPagination = 1
+            }
+            
+            guard let networkManage = networkManage as? Repository.Home else {
+                dispatchGroup.leave()
+                return
+            }
             networkManage.fetchHome(currentPagination) { [weak self] result in
                 defer {
                     dispatchGroup.leave()
                 }
                 
-                guard let self else { return }
+                guard let _ = self else { return }
                 switch result {
                 case .failure(let err):
                     completion(.failure(err))
                 case .success(let model):
-                    networkResult = self.mapModels(model)
+                    networkResult = model
                 }
             }
             
@@ -99,17 +108,9 @@ extension ViewModel {
                     }
                 }
                 
+                
+                
                 completion(.success(.init(favorite: dbResult, list: networkResult)))
-            }
-        }
-        
-        private func mapModels(_ remote: [RemoteModelHomeProtocol]) -> [Model.Home] {
-            return remote.map {
-                .init(isFavorite: false,
-                      person: .init(fullName: $0.person.fullName, avatar: $0.person.avatar, email: $0.person.email),
-                      card: .init(cardNumber: $0.card.cardNumber, cardType: $0.card.cardType),
-                      lastTransfer: $0.lastTransfer, note: $0.note,
-                      moreInfo: .init(numberOfTransfers: $0.moreInfo.numberOfTransfers, totalTransfer: $0.moreInfo.totalTransfer))
             }
         }
         
@@ -130,7 +131,7 @@ extension ViewModel {
             
             if let index = self.model.list.firstIndex(where: { $0 == model }) {
                 let isFav = self.model.list[index].isFavorite
-                self.model.list[index].isFavorite = !(isFav)
+                self.model.list[index].isFavorite = !(isFav ?? false)
             }
             
             completion()

@@ -14,7 +14,7 @@ enum Endpoint {
     var uri: String {
         switch self {
         case .home(let pagination):
-            return "transfer-list/\(pagination)"
+            return "transfer-list/?page=\(pagination)"
         }
     }
 }

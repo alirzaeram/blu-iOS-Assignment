@@ -20,8 +20,8 @@ extension ViewComponents.Cell {
                 
                 let imageFill: UIImage = .init(named: "star fill") ?? .init()
                 let imageEmpty: UIImage = .init(named: "star empty") ?? .init()
-                favoriteButton.setImage(model.isFavorite ? imageFill : imageEmpty, for: .normal)
-                favoriteButton.tintColor = model.isFavorite ? .orange : .lightGray
+                favoriteButton.setImage(model.isFavorite ?? false ? imageFill : imageEmpty, for: .normal)
+                favoriteButton.tintColor = model.isFavorite ?? false ? .orange : .lightGray
             }
         }
         

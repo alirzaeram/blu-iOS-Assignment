@@ -9,19 +9,18 @@ import Foundation
 import NetworkManger
 
 extension Model {
-    struct Home: RemoteModelHomeProtocol {
-        var person: RemoteModelPersonProtocol
-        var card: RemoteModelCardProtocol
-        var moreInfo: RemoteModelMoreInfoProtocol
+    struct Home: Codable {
+        var person: Model.Person
+        var card: Model.Card
+        var moreInfo: Model.MoreInfo
         var lastTransfer: String
         var note: String?
         
-        var isFavorite: Bool
-        var id: String
+        var isFavorite: Bool?
         var lastFavorite: Int?
         
         enum CodingKeys: String, CodingKey {
-            case person, card, note, id
+            case person, card, note
             case lastTransfer = "last_transfer"
             case moreInfo = "more_info"
             case isFavorite = "is_favorite"
@@ -29,7 +28,6 @@ extension Model {
         }
         
         init(isFavorite: Bool,person: Model.Person, card: Model.Card, lastTransfer: String, note: String? = nil, moreInfo: Model.MoreInfo) {
-            self.id = UUID.init().uuidString
             self.isFavorite = isFavorite
             self.person = person
             self.card = card
@@ -45,8 +43,7 @@ extension Model {
             self.lastTransfer = try container.decode(String.self, forKey: .lastTransfer)
             self.note = try container.decodeIfPresent(String.self, forKey: .note)
             self.moreInfo = try container.decode(Model.MoreInfo.self, forKey: .moreInfo)
-            self.id = try container.decode(String.self, forKey: .id)
-            self.isFavorite = try container.decode(Bool.self, forKey: .isFavorite)
+            self.isFavorite = try container.decodeIfPresent(Bool.self, forKey: .isFavorite)
             self.lastFavorite = try container.decodeIfPresent(Int.self, forKey: .lastFavorite)
         }
         
@@ -57,7 +54,6 @@ extension Model {
             try container.encode(self.moreInfo, forKey: .moreInfo)
             try container.encode(self.lastTransfer, forKey: .lastTransfer)
             try container.encode(self.note, forKey: .note)
-            try container.encode(self.id, forKey: .id)
             try container.encode(self.isFavorite, forKey: .isFavorite)
             try container.encode(self.lastFavorite, forKey: .lastFavorite)
         }
@@ -65,8 +61,20 @@ extension Model {
     }
 }
 
-extension Model.Home: Equatable {
-    static func == (lhs: Model.Home, rhs: Model.Home) -> Bool {
-        lhs.person.fullName == rhs.person.fullName
+extension Model.Home: Hashable {
+    public static func == (lhs: Model.Home, rhs: Model.Home) -> Bool {
+        return lhs.person == rhs.person &&
+        lhs.card == rhs.card &&
+        lhs.lastTransfer == rhs.lastTransfer &&
+        lhs.note == rhs.note &&
+        lhs.moreInfo == rhs.moreInfo
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(person)
+        hasher.combine(card)
+        hasher.combine(lastTransfer)
+        hasher.combine(note)
+        hasher.combine(moreInfo)
     }
 }

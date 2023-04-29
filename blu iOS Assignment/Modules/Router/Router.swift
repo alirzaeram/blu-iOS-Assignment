@@ -21,11 +21,16 @@ internal final class Router {
         let homeVC = ViewController.Home()
         homeVC.viewModel = viewModel
         viewModel.delegate = homeVC
-        self.navigationController.viewControllers = [homeVC]
+        self.navigationController.setViewControllers([homeVC], animated: true)
     }
     
     func navigateToDetail(_ model: Model.Home) {
+        let viewModel: ViewModel.Detail = .init(model: model)
+        let detailVC = ViewController.Detail()
+        detailVC.viewModel = viewModel
+        viewModel.delegate = detailVC
         
+        self.navigationController.pushViewController(detailVC, animated: true)
     }
     
 }

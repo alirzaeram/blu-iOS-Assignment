@@ -17,11 +17,14 @@ extension ViewComponents.Cell {
         
         lazy var collectionView: UICollectionView = {
             let layout: UICollectionViewFlowLayout = .init()
+            layout.scrollDirection = .horizontal
             let view: UICollectionView = .init(frame: .zero, collectionViewLayout: layout)
             view.register(ViewComponents.Cell.Favorite.self, forCellWithReuseIdentifier: ViewComponents.Cell.Favorite.registerIdentifier())
             
+            view.showsHorizontalScrollIndicator = false
             view.delegate = self
             view.dataSource = self
+            view.isUserInteractionEnabled = true
             
             return view
         }()

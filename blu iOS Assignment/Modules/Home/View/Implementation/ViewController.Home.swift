@@ -36,7 +36,7 @@ extension ViewController {
             self.view.addSubview(collectionView)
             self.collectionView.alignAllEdgesWithSuperview()
             
-            self.viewModel.shouldFetch()
+            self.viewModel.shouldFetch(true)
         }
     }
 }

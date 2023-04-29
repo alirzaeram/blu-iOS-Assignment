@@ -20,3 +20,5 @@ enum ViewComponents {
 }
 
 enum Theme { }
+
+enum Repository { }

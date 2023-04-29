@@ -10,7 +10,8 @@ import NetworkManger
 
 protocol HomeViewModelProtocol {
     var networkManage: any NetworkManagerProtocol { get }
-    var networkItems: [RemoteModelHomeProtocol] { get }
-    func shouldFetch()
+    var localDBManage: AppStorage { get }
+    var networkItems: [Model.Home] { get }
+    func shouldFetch(_ next: Bool)
 }
 

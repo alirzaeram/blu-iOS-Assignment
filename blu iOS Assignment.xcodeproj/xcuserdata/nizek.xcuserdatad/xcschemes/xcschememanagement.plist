@@ -7,12 +7,12 @@
 		<key>LocalDatabaseManager.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>1</integer>
+			<integer>2</integer>
 		</dict>
 		<key>NetworkManger.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>2</integer>
+			<integer>1</integer>
 		</dict>
 		<key>SQLite (Playground) 1.xcscheme</key>
 		<dict>
@@ -39,6 +39,29 @@
 		<dict>
 			<key>orderHint</key>
 			<integer>0</integer>
+		</dict>
+	</dict>
+	<key>SuppressBuildableAutocreation</key>
+	<dict>
+		<key>CAA8315B29F28F730096240A</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>CAA8319C29F2C2B20096240A</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>CAECBD4929EC973B00D093ED</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>CAECBD5F29EC973C00D093ED</key>
+		<dict>
+			<key>primary</key>
+			<true/>
 		</dict>
 	</dict>
 </dict>

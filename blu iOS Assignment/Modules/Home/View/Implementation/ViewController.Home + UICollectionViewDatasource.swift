@@ -55,6 +55,13 @@ extension ViewController.Home: UICollectionViewDataSource {
         return cell
     }
     
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        guard let viewModel = self.viewModel as? ViewModel.Home else { return }
+        if indexPath.item == (viewModel.model.list.count - 2) {
+            self.viewModel.shouldFetch(true)
+        }
+    }
+    
 }
 
 extension ViewController.Home {
